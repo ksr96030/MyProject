@@ -20,6 +20,19 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
 
     @Override
     public ProductDetails addProductDetails(ProductDetailsRequest request) throws IOException {
+        if (request.getName() == null || request.getBrand() == null ||
+                request.getPrice() == null || request.getColor() == null) {
+            throw new IllegalArgumentException("Missing mandatory field(s)");
+        }
+        if(request.getCategory() == null){
+            request.setCategory("Others");
+        }
+        if(request.getStatus() == null){
+            request.setStatus("active");
+        }
+        if(request.getQuantity() == null){
+            request.setQuantity(1);
+        }
         ProductDetails productDetails = new ProductDetails();
         productDetails.setName(request.getName());
         productDetails.setDescription(request.getDescription());

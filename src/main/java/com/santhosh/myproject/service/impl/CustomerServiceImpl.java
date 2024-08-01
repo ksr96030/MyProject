@@ -25,8 +25,11 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer create(Customer customer) {
         if (customer.getEmail() == null || customer.getFirstName() == null ||
                 customer.getLastName() == null || customer.getUserName() == null ||
-                customer.getPassword() == null || customer.getSubscriptionType() == null) {
+                customer.getPassword() == null) {
             throw new IllegalArgumentException("Missing mandatory field(s)");
+        }
+        if (customer.getSubscriptionType() == null) {
+            customer.setSubscriptionType("free");
         }
 
         if (customerDao.findByUsername(customer.getUserName()) != null) {
