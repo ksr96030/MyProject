@@ -10,6 +10,10 @@ public interface ProductDetailsService {
 
     ProductDetails addProductDetails(ProductDetailsRequest productDetails) throws IOException;
 
+    int getTotalProductsCount(Integer postedById);
+
+    List<ProductDetails> getProductDetailsByCustomerId(Integer customerId);
+
     ProductDetails getProductDetailsById(Integer id);
 
     List<ProductDetails> getProductDetails();

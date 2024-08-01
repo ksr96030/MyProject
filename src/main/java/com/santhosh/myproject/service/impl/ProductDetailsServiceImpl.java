@@ -2,26 +2,33 @@ package com.santhosh.myproject.service.impl;
 
 import com.santhosh.myproject.DTO.ProductDetailsRequest;
 import com.santhosh.myproject.dao.ProductDetailsDao;
+import com.santhosh.myproject.model.Customer;
 import com.santhosh.myproject.model.ProductDetails;
 import com.santhosh.myproject.service.ProductDetailsService;
+import com.santhosh.myproject.service.CustomerService;
 import com.santhosh.myproject.util.ImageUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class ProductDetailsServiceImpl implements ProductDetailsService {
     private final ProductDetailsDao productDetailsDao;
 
-    public ProductDetailsServiceImpl(ProductDetailsDao productDetailsDao) {
+    private final CustomerService customerService;
+
+    public ProductDetailsServiceImpl(ProductDetailsDao productDetailsDao, CustomerService customerService) {
         this.productDetailsDao = productDetailsDao;
+        this.customerService = customerService;
     }
 
     @Override
     public ProductDetails addProductDetails(ProductDetailsRequest request) throws IOException {
         if (request.getName() == null || request.getBrand() == null ||
-                request.getPrice() == null || request.getColor() == null) {
+                request.getPrice() == null || request.getColor() == null ||
+                request.getPostedBy() == null) {
             throw new IllegalArgumentException("Missing mandatory field(s)");
         }
         if(request.getCategory() == null){
@@ -33,6 +40,21 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
         if(request.getQuantity() == null){
             request.setQuantity(1);
         }
+        Integer postedById = request.getPostedBy();
+        Customer customer = customerService.getCustomerById(postedById);
+
+        int currentProductsCount = getTotalProductsCount(postedById);
+
+        String subscriptionType = customer.getSubscriptionType();
+        int maxProductsAllowed = getMaxProductsAllowed(subscriptionType);
+
+        if (currentProductsCount >= maxProductsAllowed) {
+            throw new IllegalArgumentException(
+                    "Product limit reached for subscription type: " + subscriptionType +
+                            ". Maximum allowed: " + maxProductsAllowed
+            );
+        }
+
         ProductDetails productDetails = new ProductDetails();
         productDetails.setName(request.getName());
         productDetails.setDescription(request.getDescription());
@@ -50,6 +72,37 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
         }
         return productDetailsDao.addProductDetails(productDetails);
     }
+
+    private int getMaxProductsAllowed(String subscriptionType) {
+        switch (subscriptionType.toLowerCase()) {
+            case "free":
+                return 5;
+            case "regular":
+                return 10;
+            case "dealer":
+                return 25;
+            default:
+                throw new IllegalArgumentException("Invalid subscription type: " + subscriptionType);
+        }
+}
+
+    @Override
+    public int getTotalProductsCount(Integer postedById) {
+        List<ProductDetails> customerProducts = getProductDetailsByCustomerId(postedById);
+        return customerProducts.size();
+    }
+
+    @Override
+    public List<ProductDetails> getProductDetailsByCustomerId(Integer customerId) {
+        if (customerId == null) {
+            throw new IllegalArgumentException("Customer ID cannot be null");
+        }
+
+        List<ProductDetails> products = productDetailsDao.findByPostedBy(customerId);
+
+        return products;
+    }
+
 
     @Override
     public ProductDetails getProductDetailsById(Integer id) {

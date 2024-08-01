@@ -16,6 +16,7 @@ public class Customer {
     private String email;
     private String userName;
     private String password;
+
     @Column(name = "created_date", nullable = false, updatable = false)
     private Timestamp createdDate;
 
