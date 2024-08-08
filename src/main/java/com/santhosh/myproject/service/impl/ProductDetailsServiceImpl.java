@@ -70,7 +70,16 @@ public class ProductDetailsServiceImpl implements ProductDetailsService {
             byte[] compressedImageData = ImageUtils.compressImage(request.getImage().getBytes());
             productDetails.setImage(compressedImageData);
         }
-        return productDetailsDao.addProductDetails(productDetails);
+        ProductDetails savedProduct = productDetailsDao.addProductDetails(productDetails);
+
+        // Update customer's product count
+        customer.setTotalListed(customer.getTotalListed() + 1);
+        if ("active".equals(request.getStatus())) {
+            customer.setTotalActive(customer.getTotalActive() + 1);
+        }
+        customerService.updateCustomerById(postedById, customer);
+
+        return savedProduct;
     }
 
     private int getMaxProductsAllowed(String subscriptionType) {

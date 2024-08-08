@@ -16,6 +16,9 @@ public class Customer {
     private String email;
     private String userName;
     private String password;
+    private int totalListed;
+    private int totalActive;
+    private int totalSold;
 
     @Column(name = "created_date", nullable = false, updatable = false)
     private Timestamp createdDate;
@@ -74,6 +77,30 @@ public class Customer {
 
     public String getPassword() {
         return password;
+    }
+
+    public int getTotalListed() {
+        return totalListed;
+    }
+
+    public void setTotalListed(int totalListed) {
+        this.totalListed = totalListed;
+    }
+
+    public int getTotalActive() {
+        return totalActive;
+    }
+
+    public void setTotalActive(int totalActive) {
+        this.totalActive = totalActive;
+    }
+
+    public int getTotalSold() {
+        return totalSold;
+    }
+
+    public void setTotalSold(int totalSold) {
+        this.totalSold = totalSold;
     }
 
     public void setPassword(String password) {
