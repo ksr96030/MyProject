@@ -5,6 +5,8 @@ import com.santhosh.myproject.model.Customer;
 import com.santhosh.myproject.repository.CustomerRepository;
 import com.santhosh.myproject.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,12 +15,14 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerDao customerDao;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     CustomerRepository customRepository;
 
     public CustomerServiceImpl(CustomerDao customerDao) {
         this.customerDao = customerDao;
+        this.passwordEncoder = new BCryptPasswordEncoder(); // Initializing the password encoder
     }
 
     @Override
@@ -35,6 +39,9 @@ public class CustomerServiceImpl implements CustomerService {
         if (customerDao.findByUsername(customer.getUserName()) != null) {
             throw new IllegalArgumentException("Username is already taken");
         }
+
+        String hashedPassword = passwordEncoder.encode(customer.getPassword());
+        customer.setPassword(hashedPassword);
 
         return customerDao.addCustomer(customer);
     }

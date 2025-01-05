@@ -65,6 +65,9 @@ public class CustomerDaoImpl implements CustomerDao {
         if (updatedCustomerData.getSubscriptionType() != null) {
             existingCustomer.setSubscriptionType(updatedCustomerData.getSubscriptionType());
         }
+        if (updatedCustomerData.getAddress() != null) {
+            existingCustomer.setAddress(updatedCustomerData.getAddress());
+        }
 
         Customer updatedCustomer = customerRepository.save(existingCustomer);
 
