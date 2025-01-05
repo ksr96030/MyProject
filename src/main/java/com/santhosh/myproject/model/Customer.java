@@ -1,9 +1,10 @@
 package com.santhosh.myproject.model;
 
+import com.santhosh.myproject.converter.ListToStringConverter;
 import jakarta.persistence.*;
-
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class Customer {
@@ -14,11 +15,17 @@ public class Customer {
     private String lastName;
     private String subscriptionType;
     private String email;
+    @Convert(converter = ListToStringConverter.class)
+    @Column(columnDefinition = "TEXT")
+    private List<String> address;
     private String userName;
     private String password;
     private int totalListed;
     private int totalActive;
     private int totalSold;
+    private int loginCount;
+    @Column(name = "last_login")
+    private Timestamp lastLogin;
 
     @Column(name = "created_date", nullable = false, updatable = false)
     private Timestamp createdDate;
@@ -65,6 +72,14 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<String> getAddress() {
+        return address;
+    }
+
+    public void setAddress(List<String> address) {
+        this.address = address;
     }
 
     public String getUserName() {
@@ -123,6 +138,22 @@ public class Customer {
         this.updatedDate = updatedDate;
     }
 
+    public int getLoginCount() {
+        return loginCount;
+    }
+
+    public void setLoginCount(int loginCount) {
+        this.loginCount = loginCount;
+    }
+
+    public Timestamp getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Timestamp lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
     @PrePersist
     public void prePersist() {
         this.createdDate = Timestamp.valueOf(LocalDateTime.now());
@@ -134,5 +165,9 @@ public class Customer {
         this.updatedDate = Timestamp.valueOf(LocalDateTime.now());
     }
 
+    public void updateLoginInfo() {
+        this.loginCount++; // Incrementing the login count by 1
+        this.lastLogin = Timestamp.valueOf(LocalDateTime.now()); // Updating the last login time to the current time
+    }
 
 }

@@ -1,8 +1,10 @@
 package com.santhosh.myproject.dao.impl;
 
 import com.santhosh.myproject.dao.ProductDetailsDao;
+import com.santhosh.myproject.model.Customer;
 import com.santhosh.myproject.model.ProductDetails;
 import com.santhosh.myproject.repository.ProductDetailsRepository;
+import com.santhosh.myproject.service.CustomerService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -24,11 +25,17 @@ import java.util.function.Function;
 @Repository
 public class ProductDetailsDaoImpl implements ProductDetailsDao {
 
+    private final CustomerService customerService;
+
     @Autowired
     private EntityManager entityManager;
 
     @Autowired
     private ProductDetailsRepository productDetailsRepository;
+
+    public ProductDetailsDaoImpl(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
     @Override
     public ProductDetails addProductDetails(ProductDetails productDetails) {
@@ -67,6 +74,11 @@ public class ProductDetailsDaoImpl implements ProductDetailsDao {
                 .setParameter("productDetailsId", id)
                 .executeUpdate();
         if (deletedCount > 0) {
+            ProductDetails productDetails = getProductDetailsById(id);
+            Integer customerId = productDetails.getPostedBy();
+            Customer customer = customerService.getCustomerById(customerId);
+            customer.setTotalListed(customer.getTotalListed() - 1);
+            customerService.updateCustomerById(customerId, customer);
             return "ProductDetails with ID " + id + " deleted successfully.";
         } else {
             return "No productDetails found with ID " + id + ".";
