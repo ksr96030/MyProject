@@ -24,6 +24,7 @@ public class Customer {
     private int totalActive;
     private int totalSold;
     private int loginCount;
+   // private List<PaymentDetails> paymentDetails;
     @Column(name = "last_login")
     private Timestamp lastLogin;
 
@@ -145,6 +146,14 @@ public class Customer {
     public void setLoginCount(int loginCount) {
         this.loginCount = loginCount;
     }
+
+//    public List<PaymentDetails> getPaymentDetails() {
+//        return paymentDetails;
+//    }
+//
+//    public void setPaymentDetails(List<PaymentDetails> paymentDetails) {
+//        this.paymentDetails = paymentDetails;
+//    }
 
     public Timestamp getLastLogin() {
         return lastLogin;
