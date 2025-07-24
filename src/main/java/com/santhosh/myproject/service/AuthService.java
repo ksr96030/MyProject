@@ -28,6 +28,7 @@ public class AuthService {
 
             // Convert Customer to LoginResponseDTO
             CustomerDTO responseDTO = new CustomerDTO();
+            responseDTO.setId(customer.getId());
             responseDTO.setUserName(customer.getUserName());
             responseDTO.setFirstName(customer.getFirstName());
             responseDTO.setLastName(customer.getLastName());
