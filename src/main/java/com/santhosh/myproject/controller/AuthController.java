@@ -27,7 +27,7 @@ public class AuthController {
         try {
             CustomerDTO customerDTO = authService.login(username, password);
             if (customerDTO != null) {
-                return ResponseEntity.ok("Login successful");
+                return ResponseEntity.ok(customerDTO);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
             }

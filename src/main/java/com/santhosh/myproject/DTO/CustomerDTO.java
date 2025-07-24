@@ -1,11 +1,20 @@
 package com.santhosh.myproject.DTO;
 
 public class CustomerDTO {
+    private Integer id;
     private String userName;
     private String firstName;
     private String lastName;
     private String email;
     private String subscriptionType;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getUserName() {
         return userName;
